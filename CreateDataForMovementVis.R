@@ -1,10 +1,6 @@
 # This code is to create datasets for movement visulation in QGIS
 # Select data point per week from each collar
 
-# added new stuff 2
-
-#Use this in the 2025 analysis
-
 library(sf)
 library(amt)
 #library(dplyr) #There is a conflict with amt select if dply is loaded
@@ -81,10 +77,6 @@ for (i in 1:length(dates)) {
   cat("Date:", dates[i], "- Day of year:", day_of_year[i], "\n")
 }
 
-for (i in 1:length(dates)) {
-  cat("Date:", dates[i], "- Month of year:", months[i], "\n")
-}
-
 
 # Define the start of each season (adjust these as necessary for your specific context)
 season_starts <- c(Spring = 80, Summer = 172, Fall = 264, Winter = 355)
@@ -109,55 +101,6 @@ p <- ggplot(avg_sl_by_day, aes(x = JulianDay, y = avg_sl)) +
 
 # Print the plot
 print(p)
-
-##########################
-
-# Pre-compute month starts (non-leap year)
-days_in_month <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-month_starts  <- c(1, 1 + cumsum(days_in_month)[-12])
-# month_starts: 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335
-
-
-
-p <- ggplot(avg_sl_by_day, aes(x = JulianDay, y = avg_sl)) +
-  geom_line() +
-
-
-  # vertical lines at month boundaries
-  geom_vline(xintercept = month_starts,
-             linetype   = "dashed",
-             color      = "grey50") +
-
-  # primary axis: month names; secondary axis: JulianDay numbers
-  scale_x_continuous(
-    breaks   = month_starts,
-    labels   = month.abb,
-    expand   = expansion(add = c(0, 0)),
-    sec.axis = sec_axis(
-      ~ .,
-      name   = "Julian Day",
-      breaks = month_starts,
-      labels = month_starts
-    )
-  ) +
-
-  labs(
-    x     = "Month",
-    y     = "Average SL",
-    title = "Daily Average SL by Julian Day"
-  ) +
-
-  theme_minimal() +
-  theme(
-    axis.ticks.x     = element_blank(),            # remove bottom ticks
-    axis.text.x      = element_text(angle = 45,    # tilt month labels
-                                    hjust = 1),
-    axis.title.x.top = element_text(margin = margin(b = 5))  # space for top title
-  )
-
-
-plot (p)
-
 
 #
 
